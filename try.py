@@ -19,21 +19,21 @@ SECRET_KEY = 'development key'
 DEBUG = True
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-oauth = OAuth(app)
-app.config['UPLOAD_PATH'] = 'resume uploads'
-# app.config['MAX_CONTENT_PATH'] 
-app.config['UPLOAD_EXTENSIONS'] = ['.pdf', '.docx', '.doc']
-app.config['MAX_CONTENT_LENGTH'] = 5120
-app.config['SECRET_KEY'] = '915ba8d82820d39206ef0733d4387660'
-app.config['GOOGLE_CLIENT_ID'] = "306586400383-t9chtte8h729gbksfms64e97720tsjgv.apps.googleusercontent.com"
-app.config['GOOGLE_CLIENT_SECRET'] = "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"
+oauth = OAuth(application)
+application.config['UPLOAD_PATH'] = 'resume uploads'
+# application.config['MAX_CONTENT_PATH'] 
+application.config['UPLOAD_EXTENSIONS'] = ['.pdf', '.docx', '.doc']
+application.config['MAX_CONTENT_LENGTH'] = 5120
+application.config['SECRET_KEY'] = '915ba8d82820d39206ef0733d4387660'
+application.config['GOOGLE_CLIENT_ID'] = "306586400383-t9chtte8h729gbksfms64e97720tsjgv.apps.googleusercontent.com"
+application.config['GOOGLE_CLIENT_SECRET'] = "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"
 
 google = oauth.register(
     name = 'google',
-    client_id = app.config["GOOGLE_CLIENT_ID"],
-    client_secret = app.config["GOOGLE_CLIENT_SECRET"],
+    client_id = application.config["GOOGLE_CLIENT_ID"],
+    client_secret = application.config["GOOGLE_CLIENT_SECRET"],
     access_token_url = 'https://accounts.google.com/o/oauth2/token',
     access_token_params = None,
     authorize_url = 'https://accounts.google.com/o/oauth2/auth',
@@ -60,18 +60,18 @@ except:
 
 logging.basicConfig(level=logging.INFO)
 
-@app.route('/venky')
+@application.route('/venky')
 def venky():
     return "venky returned something"
 
-@app.route(REDIRECT_URI)
+@application.route(REDIRECT_URI)
 def authorized(resp):
     access_token = resp['access_token']
     session['access_token'] = access_token, ''
     return redirect(url_for('index'))
 
 
-@app.route('/')
+@application.route('/')
 def index():
     # access_token = session.get('access_token')
     # if access_token is None:
@@ -80,12 +80,12 @@ def index():
     return render_template('home.html')
 
 
-# @app.route('/login')
+# @application.route('/login')
 # def login():
 #     callback=url_for('authorized', _external=True)
 #     return google.authorize(callback=callback)
 
-@app.route('/login')
+@application.route('/login')
 def login():
     google = oauth.create_client('google')
     redirect_uri = url_for('google_authorize', _external=True)
@@ -94,7 +94,7 @@ def login():
 
 
 # Google authorize route
-@app.route('/login/google/authorize')
+@application.route('/login/google/authorize')
 def google_authorize():
     google = oauth.create_client('google')
     try:
@@ -107,7 +107,7 @@ def google_authorize():
         print(ex)
         return 'HEllo'
 
-@app.route("/logout")
+@application.route("/logout")
 def logout():
     session.clear()
     return redirect("home", _external=True)
@@ -116,7 +116,7 @@ def get_access_token():
     return session.get('access_token')
 
 
-@app.route('/home',methods=['GET','POST'])
+@application.route('/home',methods=['GET','POST'])
 def home():
     if request.method == 'POST':
         return render_template('home.html')
@@ -124,11 +124,11 @@ def home():
         return render_template('home.html')
 
   
-@app.route('/test', methods = ['POST'])
+@application.route('/test', methods = ['POST'])
 def test():
     return render_template('home.html')
 
-# @app.route('/login', methods=['GET','POST'])
+# @application.route('/login', methods=['GET','POST'])
 # def login():
 #     form = LoginForm()
 #     if form.validate_on_submit():
@@ -139,7 +139,7 @@ def test():
 #             flash('Login Unsuccessfully. Please check the email and password!','danger')
 #     return render_template('signin.html',title = 'Login', form =form)
      
-@app.route('/allskills',methods=['GET','POST']) 
+@application.route('/allskills',methods=['GET','POST']) 
 def allskills():
     form = Allskills()
             
@@ -160,24 +160,24 @@ def allskills():
     #     filename = secure_filename(uploaded_file.filename)
     #     if filename != '':
     #         file_ext = os.path.splitext(filename)[1]
-    #         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+    #         if file_ext not in application.config['UPLOAD_EXTENSIONS']:
     #             abort(400)
-    #         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+    #         uploaded_file.save(os.path.join(application.config['UPLOAD_PATH'], filename))
     #     return render_template('allskills.html',form = form)
     # else:
     #     flash("Please Sign In!!",'success')
     #     return redirect('home')
     
-# @app.route('/sift',methods="['GET','POST']") 
+# @application.route('/sift',methods="['GET','POST']") 
 # def sift():
 #     form = Sift()
 #     return render_template('sift.html')
 
-# @app.route('/collate',methods="['GET','POST']") 
+# @application.route('/collate',methods="['GET','POST']") 
 # def collate():
 #     form = Collate()
 #     return render_template('collate.html')
 
 if __name__ == '__main__':
-   app.run(debug=True, port = 8008)
+   application.run(debug=True, port = 8008)
  

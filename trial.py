@@ -1,4 +1,4 @@
-@app.route('/upload',methods = ['POST'])
+@application.route('/upload',methods = ['POST'])
 def upload():
     if request.method == 'POST':
         form = Allskills()
@@ -13,10 +13,10 @@ def upload():
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 
-                if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                if file_ext not in application.config['UPLOAD_EXTENSIONS']:
                     # abort(400)
                     pass
-                # uploadfile.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+                # uploadfile.save(os.path.join(application.config['UPLOAD_PATH'], filename))
                 
                 newdata = {
                     "candidate_name":request.form["candidatename"],
@@ -55,7 +55,7 @@ def extractall():
     Script_lang = ["JavaScript","PHP","C#","Python","Ruby","Groovy","Perl","Lua","Bash","PowerShell","R","VBA","Emacs Lisp","GML","ECMAScript","Mscript","Julia","tcsh","Nim","POSIX shell","Tcl"]
     Front_end = [" React", "Javascript", "CSS", "HTML", "AngularJS", "Vue","Vue.js", "SASS", "Swift", "Elm","jQuery"]
     Data_Science = ["Machine Learning","NoSQL","SPSS" ,"Data Mining","Technical","SQL","Statistics","Python","Deep Learning","Big Data","Spark","NLP","AWS","Tabeleau","Natural Language Processing","Google Cloud Platform","GCP","Cloud Computing","NoSQL","Microsoft Azure","Microsoft Power BI","SAP","AI","Artificial Intelligence","Microsoft Excel"]
-    Frameworks = ["Angular","ASP.NET","ASP.NET Core","Express","Vue","Spring","Django","Flask","Laravel","Ruby on Rails","Symfony","Gatsby","Sinatra","CakePHP","Horde","Yii","Zend","Zikula","Bootstrap","Grails","Play","Web2py","Lumen","TurboGears","Phalcon","FuelPHP","Spark:","Grok","Mojoloicious","Fat-Free Framework","Wicket","Yesod","Sencha Ext JS","Nuxt.js","Phoenix","CodeIgniter","PHPixie","Javalin","Silex","Caliburn Micro","Ionic","Xamarin","PhoneGap","React Native ","Corona","jQuery Mobile","Flutter","Mobile Angular UI","Appcelerator Titanium","Swiftic","NativeScript","Framework 7","Rachet","PyTorch","Neural Network Libraries","Neural Network Libraries","Apache MXNet","ML.NET","Infer.NET","Accord.NET","Chainer","Horovod","H2O Q","Robot Framework","Gauge","Pytest","Jest","Mocha","Jasmine","Nightwatch","Protractor","Protractor","TestProject","Galen Framework","WebDriverIO","OpenTest","Citrus","Karate","Scrapy","Truffle","Embark","Etherlime","OpenZeppelin Contracts","Brownie","Create Eth App","Exonum","Hyperledger","Corda","MultiChain","Meteor","Onsen UI","SiteWhere","Electron","Svelte","Aurelia","Mithril","Bulma","Microdot","Rapidoid","Ktor","Scalatra","Toolatra"]
+    Frameworks = ["Angular","ASP.NET","ASP.NET Core","Express","Vue","Spring","Django","Flask","Laravel","Ruby on Rails","Symfony","Gatsby","Sinatra","CakePHP","Horde","Yii","Zend","Zikula","Bootstrap","Grails","Play","Web2py","Lumen","TurboGears","Phalcon","FuelPHP","Spark:","Grok","Mojoloicious","Fat-Free Framework","Wicket","Yesod","Sencha Ext JS","Nuxt.js","Phoenix","CodeIgniter","PHPixie","Javalin","Silex","Caliburn Micro","Ionic","Xamarin","PhoneGap","React Native ","Corona","jQuery Mobile","Flutter","Mobile Angular UI","Appcelerator Titanium","Swiftic","NativeScript","Framework 7","Rachet","PyTorch","Neural Network Libraries","Neural Network Libraries","Apache MXNet","ML.NET","Infer.NET","Accord.NET","Chainer","Horovod","H2O Q","Robot Framework","Gauge","Pytest","Jest","Mocha","Jasmine","Nightwatch","Protractor","Protractor","TestProject","Galen Framework","WebDriverIO","OpenTest","Citrus","Karate","Scrapy","Truffle","Embark","Etherlime","OpenZeppelin Contracts","Brownie","Create Eth application","Exonum","Hyperledger","Corda","MultiChain","Meteor","Onsen UI","SiteWhere","Electron","Svelte","Aurelia","Mithril","Bulma","Microdot","Rapidoid","Ktor","Scalatra","Toolatra"]
     print("--------------------------------------------------------") 
     allskills = programming_lang + web_technologies + databasesmgmt + tools + Script_lang + Front_end + Data_Science + Frameworks
     print(allskills)
@@ -87,10 +87,10 @@ from flask import Flask, redirect, render_template, session, url_for,request,sen
 
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 # APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-oauth = OAuth(app)
+oauth = OAuth(application)
 
 GOOGLE_CLIENT_ID = '306586400383-epc15d8u7679emu9pr0hj3d2hl001nnr.apps.googleusercontent.com'
 GOOGLE_CLIENT_SECRET = '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'
@@ -98,11 +98,11 @@ REDIRECT_URI = '/authorised'
 
 
 
-app.config['UPLOAD_EXTENSIONS'] = ['.pdf', '.docx', '.doc']
-app.config['MAX_CONTENT_LENGTH'] = 1024*1024*1024
-app.config['UPLOAD_PATH'] = 'uploads'
+application.config['UPLOAD_EXTENSIONS'] = ['.pdf', '.docx', '.doc']
+application.config['MAX_CONTENT_LENGTH'] = 1024*1024*1024
+application.config['UPLOAD_PATH'] = 'uploads'
 
-app.config['SECRET_KEY'] = '915ba8d82820d39206ef0733d4387660'
+application.config['SECRET_KEY'] = '915ba8d82820d39206ef0733d4387660'
 
 AUTH0_DOMAIN = "dev-lo037ct9.us.auth0.com"
 
@@ -166,7 +166,7 @@ def read_pdf(filename):
 
 
 
-@app.route("/")
+@application.route("/")
 def home():
     # form  = Allskills()
     print("-----------------------------------")
@@ -174,21 +174,21 @@ def home():
     # print("-----------------------------------")
     # return render_template('home.html')
 
-@app.route("/login")
+@application.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True)
     )
 
 
-@app.route("/callback", methods=["GET", "POST"])
+@application.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
     # print(token)
     return redirect("/")
 
-@app.route("/logout")
+@application.route("/logout")
 def logout():
     session.clear()
     # return redirect(
@@ -203,7 +203,7 @@ def logout():
     # )
     return render_template('home.html')
 
-@app.route('/allskills',methods=['GET','POST']) 
+@application.route('/allskills',methods=['GET','POST']) 
 def allskills():
     form = Allskills()
     if session.get("user"):
@@ -229,7 +229,7 @@ def sample():
     else:
         return redirect('login')
 
-@app.route('/download')
+@application.route('/download')
 def downloadFile ():
     
     # Standard query to Mongo
@@ -243,7 +243,7 @@ def downloadFile ():
 
 
 
-@app.route('/upload',methods = ['POST'])
+@application.route('/upload',methods = ['POST'])
 def upload():
     if request.method == 'POST':
         # print('C1')
@@ -264,10 +264,10 @@ def upload():
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 
-                if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                if file_ext not in application.config['UPLOAD_EXTENSIONS']:
                     # abort(400)
                     pass
-                # uploadfile.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+                # uploadfile.save(os.path.join(application.config['UPLOAD_PATH'], filename))
                 
                 newdata = {
                     "candidate_name":request.form["candidatename"],
@@ -287,7 +287,7 @@ def upload():
 
 
 
-# @app.route('/display/<filename>')
+# @application.route('/display/<filename>')
 # def display_pdf(filename):
 # 	#print('display_image filename: ' + filename)
 # 	return redirect(url_for('static', filename='uploads/' + filename), code=301)
@@ -302,5 +302,5 @@ def upload():
 
 
 if __name__ == '__main__':
-       app.run(debug=True, port = 8008)
+       application.run(debug=True, port = 8008)
  

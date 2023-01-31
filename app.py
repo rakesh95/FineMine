@@ -22,10 +22,10 @@ import PyPDF2
 import codecs
 
 
-app = Flask(__name__)
-# APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+application = Flask(__name__)
+# application_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-oauth = OAuth(app)
+oauth = OAuth(application)
 
 GOOGLE_CLIENT_ID = 'Your Client Id'
 GOOGLE_CLIENT_SECRET = 'Client Secret key'
@@ -33,11 +33,11 @@ REDIRECT_URI = '/authorised'
 
 
 
-app.config['UPLOAD_EXTENSIONS'] = ['.pdf', '.docx', '.doc']
-app.config['MAX_CONTENT_LENGTH'] = 1024*1024*1024
-app.config['UPLOAD_PATH'] = 'uploads'
+application.config['UPLOAD_EXTENSIONS'] = ['.pdf', '.docx', '.doc']
+application.config['MAX_CONTENT_LENGTH'] = 1024*1024*1024
+application.config['UPLOAD_PATH'] = 'uploads'
 
-app.config['SECRET_KEY'] = 'generate some random secret key'
+application.config['SECRET_KEY'] = 'generate some random secret key'
 
 AUTH0_DOMAIN = "dev-lo037ct9.us.auth0.com"
 
@@ -60,7 +60,7 @@ try:
         port = 27017,
         serverSelectionTimeoutMS = 1000
     )
-    db = mongo.finewebapp
+    db = mongo.finewebapplication
     
     mongo.server_info() #trigger exception if cannot connect to db
 except:
@@ -74,30 +74,30 @@ def write_new_pdf(path):
         encoded_string = base64.b64encode(f.read())
     return encoded_string
 
-@app.route("/")
+@application.route("/")
 def home():    
     return render_template('home.html')
 
-@app.route("/login")
+@application.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True)
     )
 
 
-@app.route("/callback", methods=["GET", "POST"])
+@application.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
     # print(token)
     return redirect("/")
 
-@app.route("/logout")
+@application.route("/logout")
 def logout():
     session.clear()    
     return render_template('home.html')
 
-@app.route('/allskills',methods=['GET','POST']) 
+@application.route('/allskills',methods=['GET','POST']) 
 def allskills():
     form = Allskills()
     if session.get("user"):
@@ -105,7 +105,7 @@ def allskills():
     else:
         return redirect('login')
 
-@app.route('/sift',methods = ['GET','POST'])
+@application.route('/sift',methods = ['GET','POST'])
 def sift():
     form = Sample()
     if session.get("user"):
@@ -113,7 +113,7 @@ def sift():
     else:
         return redirect('login')
 
-@app.route('/getdata',methods= ['POST'])
+@application.route('/getdata',methods= ['POST'])
 def getdata():
     if request.method == 'POST': 
         errors = None 
@@ -157,7 +157,7 @@ def getdata():
     return render_template('home.html')
     
 
-@app.route('/sortall',methods = ['GET','POST'])
+@application.route('/sortall',methods = ['GET','POST'])
 def sortall():
     form = SortAll()
     if session.get("user"):
@@ -165,7 +165,7 @@ def sortall():
     else:
         return redirect('login')
 
-@app.route('/getall',methods = ['POST'])
+@application.route('/getall',methods = ['POST'])
 def getall():
     if request.method == 'POST': 
             errors = None 
@@ -198,12 +198,12 @@ def getall():
                 # print(result)
                 for s in result:
                     print(s) 
-                    result1.append(s)                                                                                
+                    result1.applicationend(s)                                                                                
             return render_template('sortAll.html', form = form, data = result1, error = errors )
     return render_template('home.html')
 
 
-@app.route('/download')
+@application.route('/download')
 def downloadFile ():
     # i =var 
     data = db.allskills_db.find_one(filter=dict(contact_no="07019328368"))
@@ -216,7 +216,7 @@ def downloadFile ():
 
 
 
-@app.route('/upload',methods = ['POST'])
+@application.route('/upload',methods = ['POST'])
 def upload():
     if request.method == 'POST':        
         form = Allskills()        
@@ -230,9 +230,9 @@ def upload():
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 
-                if file_ext not in app.config['UPLOAD_EXTENSIONS']:            
+                if file_ext not in application.config['UPLOAD_EXTENSIONS']:            
                     pass
-                # uploadfile.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+                # uploadfile.save(os.path.join(application.config['UPLOAD_PATH'], filename))
                 
                 # with codecs.open(bytes(uploadfile.read()), 'rb', encoding='utf-8',errors='ignore') as fdata:
                       
@@ -250,11 +250,11 @@ def upload():
                 programming_lang = ["Javascript","Python","C","Java","Go", "Perl", "Ruby","swift", "Scala", "PHP", "C++", "R programming","Objective C", "SQL","Structured Query Language"," Arduino","MATLAB","Rust","Typescript","Kotlin","CSS","Groovy","Dart","Powershell","Julia","Scratch","COBOL","Fortron", "Shell","Prolog","VBScript","Haskell","Delphi","Hack","PASCAL","ADA","LUA","Visual Basic","Lisp","Bash","SAS Programming","C#"]
                 web_technologies = ["MEAN stack","PHP","Django","Ruby","React.js","HTML","Node.Js", "React", "ASP.NET","Laravel", "Swift", "Go", "Vue","React", "Angular", "Ember", "JQuery","Structured Query Language","Java","AngularJS","Rust","Typescript","Kotlin","CSS","C#"]
                 databasesmgmt = ["Oracle Database","IBM DB2","Microsoft Sql server","MySQL","SQL","FileMaker Pro","Microsoft Access","SQLite","PostgresSQL", "MongoDB", "Redis","CouchDB", "Neo4j"]
-                tools = ["Microsoft Excel","Scalyr","Rudder","Github","Graylog","Docker","UpGuard","Jenkins","Puppet","QuerySurge","Solarwinds DevOps","Vagrant","PagerDuty","Prometheus","Ganglia","Snort","Splunk","Nagios","Chef","Sumo Logic","OverOps","Consul","Stackify Retrace","CFEngine","Artifactory","Capistrano","Monit","Supervisor","Ansible","Code Climate","Icinga","New Relic APM","Juju","ProductionMap","Kubernetes","Git","Gradle","Kibana","Salt","Monit","Terraform","Bitbucket","Microsoft Power BI","Tableau Desktop","R Studio","SAS Studio","R Studio","Infogram","ChartBlocks","Datawrapper","D3.js","Domo","Google Charts","FusionCharts","Chart.js","Sisense","Workday Adaptive Planning","Grafana","Plecto","Whatagraph","Cluvio","RAWGraphs","Visually","looker","Chartist.js","Sigma.js","Qlik","Polymaps","Zoho Analytics","Databox","ChartBlocks","Datawrapper"," Plotly","Visually"," Ember Charts"," NVD3"," Highcharts","Leaflet","Hubspot","Spotfire","Dundas Data Visualization"]
+                tools = ["Microsoft Excel","Scalyr","Rudder","Github","Graylog","Docker","UpGuard","Jenkins","Puppet","QuerySurge","Solarwinds DevOps","Vagrant","PagerDuty","Prometheus","Ganglia","Snort","Splunk","Nagios","Chef","Sumo Logic","OverOps","Consul","Stackify Retrace","CFEngine","Artifactory","Capistrano","Monit","Supervisor","Ansible","Code Climate","Icinga","New Relic APM","Juju","ProductionMap","Kubernetes","Git","Gradle","Kibana","Salt","Monit","Terraform","Bitbucket","Microsoft Power BI","Tableau Desktop","R Studio","SAS Studio","R Studio","Infogram","ChartBlocks","Datawrapplicationer","D3.js","Domo","Google Charts","FusionCharts","Chart.js","Sisense","Workday Adaptive Planning","Grafana","Plecto","Whatagraph","Cluvio","RAWGraphs","Visually","looker","Chartist.js","Sigma.js","Qlik","Polymaps","Zoho Analytics","Databox","ChartBlocks","Datawrapplicationer"," Plotly","Visually"," Ember Charts"," NVD3"," Highcharts","Leaflet","Hubspot","Spotfire","Dundas Data Visualization"]
                 Script_lang = ["JavaScript","PHP","C#","Python","Ruby","Groovy","Perl","Lua","Bash","PowerShell","R","VBA","Emacs Lisp","GML","ECMAScript","Mscript","Julia","tcsh","Nim","POSIX shell","Tcl"]
                 Front_end = [" React", "Javascript", "CSS", "HTML", "AngularJS", "Vue","Vue.js", "SASS", "Swift", "Elm","jQuery"]
                 Data_Science = ["Machine Learning","NoSQL","SPSS" ,"Data Mining","Technical","SQL","Statistics","Python","Deep Learning","Big Data","Spark","NLP","AWS","Tabeleau","Natural Language Processing","Google Cloud Platform","GCP","Cloud Computing","NoSQL","Microsoft Azure","Microsoft Power BI","SAP","AI","Artificial Intelligence","Microsoft Excel"]
-                Frameworks = ["Angular","ASP.NET","ASP.NET Core","Express","Vue","Spring","Django","Flask","Laravel","Ruby on Rails","Symfony","Gatsby","Sinatra","CakePHP","Horde","Yii","Zend","Zikula","Bootstrap","Grails","Play","Web2py","Lumen","TurboGears","Phalcon","FuelPHP","Spark:","Grok","Mojoloicious","Fat-Free Framework","Wicket","Yesod","Sencha Ext JS","Nuxt.js","Phoenix","CodeIgniter","PHPixie","Javalin","Silex","Caliburn Micro","Ionic","Xamarin","PhoneGap","React Native ","Corona","jQuery Mobile","Flutter","Mobile Angular UI","Appcelerator Titanium","Swiftic","NativeScript","Framework 7","Rachet","PyTorch","Neural Network Libraries","Neural Network Libraries","Apache MXNet","ML.NET","Infer.NET","Accord.NET","Chainer","Horovod","H2O Q","Robot Framework","Gauge","Pytest","Jest","Mocha","Jasmine","Nightwatch","Protractor","Protractor","TestProject","Galen Framework","WebDriverIO","OpenTest","Citrus","Karate","Scrapy","Truffle","Embark","Etherlime","OpenZeppelin Contracts","Brownie","Create Eth App","Exonum","Hyperledger","Corda","MultiChain","Meteor","Onsen UI","SiteWhere","Electron","Svelte","Aurelia","Mithril","Bulma","Microdot","Rapidoid","Ktor","Scalatra","Toolatra"]
+                Frameworks = ["Angular","ASP.NET","ASP.NET Core","Express","Vue","Spring","Django","Flask","Laravel","Ruby on Rails","Symfony","Gatsby","Sinatra","CakePHP","Horde","Yii","Zend","Zikula","Bootstrap","Grails","Play","Web2py","Lumen","TurboGears","Phalcon","FuelPHP","Spark:","Grok","Mojoloicious","Fat-Free Framework","Wicket","Yesod","Sencha Ext JS","Nuxt.js","Phoenix","CodeIgniter","PHPixie","Javalin","Silex","Caliburn Micro","Ionic","Xamarin","PhoneGap","React Native ","Corona","jQuery Mobile","Flutter","Mobile Angular UI","applicationcelerator Titanium","Swiftic","NativeScript","Framework 7","Rachet","PyTorch","Neural Network Libraries","Neural Network Libraries","Apache MXNet","ML.NET","Infer.NET","Accord.NET","Chainer","Horovod","H2O Q","Robot Framework","Gauge","Pytest","Jest","Mocha","Jasmine","Nightwatch","Protractor","Protractor","TestProject","Galen Framework","WebDriverIO","OpenTest","Citrus","Karate","Scrapy","Truffle","Embark","Etherlime","OpenZeppelin Contracts","Brownie","Create Eth application","Exonum","Hyperledger","Corda","MultiChain","Meteor","Onsen UI","SiteWhere","Electron","Svelte","Aurelia","Mithril","Bulma","Microdot","Rapidoid","Ktor","Scalatra","Toolatra"]
                 # print("--------------------------------------------------------") 
                 allskills = programming_lang + web_technologies + databasesmgmt + tools + Script_lang + Front_end + Data_Science + Frameworks
                 # print(allskills)
@@ -307,5 +307,5 @@ def upload():
         return render_template('home.html')
 
 if __name__ == '__main__':
-       app.run(debug=True, port = 8008)
+       application.run(debug=True, port = 8008)
  

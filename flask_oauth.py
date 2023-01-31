@@ -146,12 +146,12 @@ class OAuth(object):
         :attr:`remote_apps` dictionary.  The keyword arguments are
         forwarded to the :class:`OAuthRemoteApp` consturctor.
         """
-        app = OAuthRemoteApp(self, name, **kwargs)
+        application = OAuthRemoteApp(self, name, **kwargs)
         if register:
             assert name not in self.remote_apps, \
                 'application already registered'
-            self.remote_apps[name] = app
-        return app
+            self.remote_apps[name] = application
+        return application
 
 
 class OAuthRemoteApp(object):
@@ -359,7 +359,7 @@ class OAuthRemoteApp(object):
             def get_token(token='user'):
                 if token == 'user':
                     return find_the_user_token()
-                elif token == 'app':
+                elif token == 'application':
                     return find_the_app_token()
                 raise RuntimeError('invalid token')
         """
